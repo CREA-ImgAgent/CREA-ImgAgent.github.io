@@ -2,9 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="description"
-        content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos.">
-  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+  <meta name="description" content="CREA: A Collaborative Multi-Agent Framework for Creative Image Editing and Generation">
+  <meta name="keywords" content="CREA, Creative Image Editing, Creative Image Generation, Multi-Agent, AI Creativity">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CREA: A Collaborative Multi-Agent Framework for Creative Image Editing and Generation</title>
 
@@ -12,25 +11,17 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
-
     gtag('config', 'G-PYVRSFMDRL');
   </script>
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
   <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
   <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
   <link rel="icon" href="./static/images/favicon.svg">
 
@@ -42,6 +33,7 @@
 </head>
 <body>
 
+<!-- Header Section -->
 <section class="hero">
   <div class="hero-body">
     <div class="container is-max-desktop">
@@ -69,42 +61,37 @@
   </div>
 </section>
 
-
-          <div class="column has-text-centered">
-            <div class="publication-links">
-              <!-- PDF Link. -->
-              <span class="link-block">
-                <a href=""
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fas fa-file-pdf"></i>
-                  </span>
-                  <span>Paper</span>
-                </a>
-              </span>
-              <span class="link-block">
-                <a href=""
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv</span>
-                </a>
-              </span>
-            
-              <!-- Code Link. -->
-              <span class="link-block">
-                <a href=""
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-github"></i>
-                  </span>
-                  <span>Code (Coming Soon)</span>
-                  </a>
-              </span>
-
-            </div>
-
+<!-- Links Section -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-widescreen">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <div class="publication-links">
+            <span class="link-block">
+              <a href="" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fas fa-file-pdf"></i>
+                </span>
+                <span>Paper</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="ai ai-arxiv"></i>
+                </span>
+                <span>arXiv</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>Code (Coming Soon)</span>
+              </a>
+            </span>
           </div>
         </div>
       </div>
@@ -112,118 +99,30 @@
   </div>
 </section>
 
+<!-- TL;DR and Teaser Section -->
 <section class="hero teaser">
   <div class="container is-max-widescreen">
     <div class="hero-body">
-      <!-- TL;DR Section -->
       <h2 class="title is-5" style="font-weight: 400; text-align: justify; margin-bottom: 20px; color: #444;">
-        <strong>TL;DR</strong> We introduce CREA, the first creative image editing tool using a collaborative multi-agent framework. CREA simulates the human creative process
-        to autonomously perform novel image generation and editing tasks. By coordinating specialized AI agents like a Creative Director, Prompt Architect, and Art Critic, 
-        CREA plans, critiques, and refines creative outputs in a disentangled and interpretable way. Beyond static images, CREA supports personalization, user-guided editing, 
-        and even creative video generation, offering a versatile foundation for AI-driven artistic workflows and human-AI co-creation.
-
+        <strong>TL;DR</strong> We introduce CREA, the first creative image editing tool using a collaborative multi-agent framework. CREA simulates the human creative process to autonomously perform novel image generation and editing tasks. By coordinating specialized AI agents like a Creative Director, Prompt Architect, and Art Critic, CREA plans, critiques, and refines creative outputs in a disentangled and interpretable way. Beyond static images, CREA supports personalization, user-guided editing, and even creative video generation.
       </h2>
-      <!-- Teaser image -->
       <img id="teaser-image" src="./static/images/teaser.jpg" alt="Teaser Image" style="width: 120%; height: auto;">
       <h2 class="subtitle teaser-caption" style="font-size: 1rem; text-align: justify;">
-       We introduce <span class="dnerf">CREA</span>, the first creative image editing method through a novel collaborative multi-agentic framework that emulates the 
-       human creative process. Our approach is driven by collaborative interactions between specialized agents, such as a Creative Director and an Art Critic,
-       who communicate to refine and enhance the creative output. Supporting both image editing and generation, our framework can also be
-       integrated with personalization techniques to further enrich and expand creative workflows.
+        We introduce <span class="dnerf">CREA</span>, the first creative image editing method through a novel collaborative multi-agentic framework that emulates the human creative process. Our approach is driven by collaborative interactions between specialized agents, such as a Creative Director and an Art Critic, who communicate to refine and enhance the creative output. Supporting both image editing and generation, our framework can also be integrated with personalization techniques to further enrich and expand creative workflows.
       </h2>
     </div>
   </div>
 </section>
 
-
+<!-- Abstract Section -->
 <section class="section">
   <div class="container is-max-desktop">
-    <!-- Abstract. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Creativity in AI-generated imagery remains a fundamental challenge, requiring not only the generation of visually
-            compelling content but also the capacity to add novel, expressive, and artistically rich transformations to images. 
-            Unlike conventional editing tasks that rely on direct prompt-based modifications, creative image editing demands an 
-            autonomous, iterative approach that balances originality, coherence, and artistic intent. To address this, we introduce
-            <span class="dnerf">CREA</span>, a novel multi-agent collaborative framework that mimics human creative process. Our framework leverages
-            a team of specialized AI agents who dynamically collaborate to conceptualize, generate, critique, and enhance images. 
-            Through extensive qualitative and quantitative evaluations, we demonstrate that CREA significantly outperforms state-of-the-art methods in diversity, 
-            semantic alignment, and creative transformation. By structuring creativity as a dynamic, agentic process, CREA redefines the intersection of AI 
-            and art, paving the way for autonomous AI-driven artistic exploration, generative design, and human-AI co-creation. To the best of our knowledge, 
-            <span class="dnerf">CREA</span> is the first work to introduce a disentangled approach the first to employ an agentic framework for editing tasks.</p>
-        </div>
-      </div>
-    </div>
-    <!--/ Abstract. -->
-</section>
-
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-widescreen">
-      <div class="columns is-centered">
-        <div class="column">
-          <!-- Paper Method Diagram -->
-          <h2 class="title is-3 has-text-centered">Method</h2>
-          <div class="publication-diagram" style="text-align: center;">
-            <img id="method-diagram" src="./static/images/CREA-method-diagram.jpg" alt="Paper Method Diagram" style="width: 100%; height: auto; margin-top: 20px;">
-            <p class="teaser-caption" style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 10px; margin-bottom: 20px; color: #444;">
-            <span class="dnerf">CREA Framework</span>. We introduce a collaborative multi-agent framework for creative image editing and generation. Our
-            framework consists of four stages, 1.a Pre-Generation Planning, 1.b Creative Image Generation/Editing, 2. Post-Generation Evaluationand 3. 
-              Self-Enhancement.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container is-max-widescreen">
-    <!-- Qualitative Results Main Heading -->
-    <div class="columns is-centered">
-      <div class="column has-text-centered">
-        <h2 class="title is-3">Qualitative Results</h2>
-      </div>
-    </div>
-
-    
-    <div class="columns is-centered">
-      <div class="column">
-        <div class="content has-text-centered">
-          <img id="image-generation" src="./static/images/qualitative-results.jpg" alt="Image Generation" style="width: 120%; height: auto;">
-          <p class="teaser-caption">
-          <p style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 10px; margin-bottom: 20px; color: #444;">
-          Qualitative Results for Creative Image Editing and Generation Tasks. Qualitative results illustrating CREA’s disentangled
-          creative edits and generation across diverse objects and domains, demonstrating its ability to produce a wide range of creative variations.
-          For more results, please checkout our paper's Supplementary Material.</p>
-        </div>
-      </div>
-    </div>
-
-    
-<section class="section">
-  <div class="container is-max-widescreen">
-    <!-- Qualitative Comparison Main Heading -->
-    <div class="columns is-centered">
-      <div class="column has-text-centered">
-        <h2 class="title is-3">Qualitative Comparison</h2>
-      </div>
-    </div>
-
-    <!-- Comparison Image -->
-    <div class="columns is-centered">
-      <div class="column">
-        <div class="content" style="text-align: justify;">
-          <img id="qualitative-comparison" src="./static/images/crea-qualitative-comparison.jpeg" alt="Qualitative Comparison" style="width: 100%; height: auto; margin-top: 20px;">
-          <p class="teaser-caption">
-          a) Qualitative Comparison of Creative Image Editing Task. We compare CREA with state-of-the-art editing methods. As
-          shown, CREA successfully reimagines objects into creative variants in a disentangled manner, whereas other approaches either fail to
-          produce distinctly creative edits or introduce unintended alterations. b) Qualitative Comparison of Creative Image Generation Task.
-          We compare CREA with CreativeLab, SDXL and Flux. CREA consistently produces diverse and creative generations across multiple domains.
+            Creativity in AI-generated imagery remains a fundamental challenge, requiring not only the generation of visually compelling content but also the capacity to add novel, expressive, and artistically rich transformations to images. Unlike conventional editing tasks that rely on direct prompt-based modifications, creative image editing demands an autonomous, iterative approach that balances originality, coherence, and artistic intent. To address this, we introduce <span class="dnerf">CREA</span>, a novel multi-agent collaborative framework that mimics the human creative process. Our framework leverages a team of specialized AI agents who dynamically collaborate to conceptualize, generate, critique, and enhance images. Through extensive qualitative and quantitative evaluations, we demonstrate that CREA significantly outperforms state-of-the-art methods in diversity, semantic alignment, and creative transformation. By structuring creativity as a dynamic, agentic process, CREA redefines the intersection of AI and art, paving the way for autonomous AI-driven artistic exploration, generative design, and human-AI co-creation. To the best of our knowledge, <span class="dnerf">CREA</span> is the first work to introduce a disentangled approach and the first to employ an agentic framework for editing tasks.
           </p>
         </div>
       </div>
@@ -231,7 +130,47 @@
   </div>
 </section>
 
+<!-- Method Diagram Section -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-widescreen">
+      <div class="columns is-centered">
+        <div class="column">
+          <h2 class="title is-3 has-text-centered">Method</h2>
+          <div class="publication-diagram" style="text-align: center;">
+            <img id="method-diagram" src="./static/images/CREA-method-diagram.jpg" alt="Paper Method Diagram" style="width: 100%; height: auto; margin-top: 20px;">
+            <p class="teaser-caption" style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 10px; margin-bottom: 20px; color: #444;">
+              <span class="dnerf">CREA Framework</span>. We introduce a collaborative multi-agent framework for creative image editing and generation. Our framework consists of four stages: 1.a Pre-Generation Planning, 1.b Creative Image Generation/Editing, 2. Post-Generation Evaluation, and 3. Self-Enhancement.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
+<!-- Qualitative Results Section -->
+<section class="section">
+  <div class="container is-max-widescreen">
+    <div class="columns is-centered">
+      <div class="column has-text-centered">
+        <h2 class="title is-3">Qualitative Results</h2>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="content has-text-centered">
+          <img id="image-generation" src="./static/images/qualitative-results.jpg" alt="Image Generation" style="width: 120%; height: auto;">
+          <p class="teaser-caption" style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 10px; margin-bottom: 20px; color: #444;">
+            Qualitative results for creative image editing and generation tasks illustrate CREA’s disentangled creative edits and generation across diverse objects and domains. For more results, please check out our paper’s Supplementary Material.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quantitative Results Section (Updated) -->
 <section class="section">
   <div class="container is-max-widescreen">
     <!-- Quantitative Results Main Heading -->
@@ -240,78 +179,50 @@
         <h2 class="title is-3">Quantitative Results</h2>
       </div>
     </div>
-
-  <!-- Explanation for Qualitative Results -->
-  <div class="columns is-centered">
-    <div class="column">
-      <p style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 20px;">
-      We conduct a comprehensive evaluation of 'Context Canvas' in two stages, assessing both its foundational RAG component and 
-      image generation. We benchmark our approach against SOTA T2I models-such as Flux, SDXL, and DALL-E 3 across image generation 
-      and two rounds of self-correction. 
-      </p>
-    </div>
-  </div>
-
-   <!-- RAG Evaluation Subheading -->
-    <div class="columns is-centered">
-      <div class="column has-text-centered">
-        <h3 class="title is-4">RAG Evaluation</h3>
-      </div>
-    </div>
-
-   <!-- Explanation for RAG Evaluation -->
+    <!-- Traditional Metrics Table -->
     <div class="columns is-centered">
       <div class="column">
-        <p style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 20px;">
-          We evaluate the foundational RAG system used in our method for both 
-          retrieval and generation using <a href="https://arxiv.org/abs/2303.16634" target="_blank" style="color: #007bff; text-decoration: underline;">GEval</a>.
-          Our RAG process achieves high evaluation scores across both retrieval and generation due to meticulous data curation, retrieval, and prompt engineering. 
+        <p style="font-size: 1rem; line-height: 1.5; text-align: justify;">
+          We evaluate CREA using traditional computer vision metrics such as CLIP Score, FID, and IS to assess overall image quality and text–image alignment. Our results indicate that CREA not only meets but in several aspects outperforms state-of-the-art T2I models, delivering high perceptual diversity and semantic consistency.
         </p>
-      </div>
-    </div>
-
-    
-    <!-- RAG Evaluation Table with Scaled Caption -->
-    <div class="columns is-centered">
-      <div class="column is-narrow">
-        <div class="content" style="text-align: center; width: 30%; margin: 0 auto;">
-          <img id="rag-evaluation" src="./static/images/crea-traditional-quant-table.jpg" alt="RAG Evaluation Table" style="width: 100%; height: auto; margin-top: 20px;">
+        <div class="content has-text-centered">
+          <img src="./static/images/crea-traditional-quant-table.jpg" alt="Traditional Metrics Table" style="width: 100%; height: auto; margin-top: 20px;">
         </div>
       </div>
     </div>
-
-
-    <!-- Benchmarking Subheading -->
-    <div class="columns is-centered">
-      <div class="column has-text-centered">
-        <h3 class="title is-4">Comparison with SOTA T2I Models</h3>
+    <!-- LLM-as-a-Judge Metrics Table -->
+    <div class="columns is-centered" style="margin-top: 60px;">
+      <div class="column">
+        <p style="font-size: 1rem; line-height: 1.5; text-align: justify;">
+          Traditional metrics can overlook subtle aspects of creative quality. To capture these nuances, we employ an LLM‑as‑a‑Judge framework (DeepEval) that quantifies Attribute Accuracy, Context Relevance, Visual Fidelity, and Intent Representation. As detailed in the table below, CREA consistently outperforms baseline models, reflecting its superior ability to generate images that are both novel and contextually rich.
+        </p>
+        <div class="content has-text-centered">
+          <img src="./static/images/crea-llm-judge-quant-table.jpg" alt="LLM-as-a-Judge Table" style="width: 100%; height: auto; margin-top: 20px;">
+        </div>
       </div>
     </div>
-
-    <!-- Explanation for SOTA Benchmarking -->
+    <!-- Ablation Study Section -->
+    <div class="columns is-centered" style="margin-top: 60px;">
+      <div class="column has-text-centered">
+        <h3 class="title is-4">Ablation Study</h3>
+      </div>
+    </div>
     <div class="columns is-centered">
       <div class="column">
-        <p style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 20px;">
-          Traditional metrics like CLIP Score and FID, while effective for general image-text alignment and quality, fail to capture the cultural specificity, 
-          narrative depth, and relational accuracy crucial for domain-specific tasks. To address these limitations, we utilize the 
-          <a href="https://arxiv.org/abs/2306.05685" target="_blank" style="color: #007bff; text-decoration: underline;">LLM-as-a-Judge</a> 
-          framework, by defining metrics such as Attribute Accuracy, Context Relevance, Visual Fidelity, and Intent Representation. We implement the metrics 
-          using <a href="https://github.com/confident-ai/deepeval" target="_blank" style="color: #007bff; text-decoration: underline;">DeepEval</a> library. 
-          These metrics assess nuanced attributes like character-specific elements, situational alignment, and the overall essence of the generated 
-          imagery.
+        <p style="font-size: 1rem; line-height: 1.5; text-align: justify;">
+          We conduct ablation studies to quantify the impact of each agent in the CREA framework. Removing key modules, such as the Prompt Architect or Art Critic, significantly degrades both traditional metrics and LLM‑judged creativity scores, emphasizing the necessity of each specialized role.
         </p>
+        <div class="content has-text-centered">
+          <img src="./static/images/crea-ablation-table.jpg" alt="Ablation Table" style="width: 100%; height: auto; margin-top: 20px;">
+        </div>
       </div>
     </div>
-
-    <!-- SOTA Comparison Table -->
-    <div class="columns is-centered">
+    <div class="columns is-centered" style="margin-top: 40px;">
       <div class="column">
         <div class="content has-text-centered">
-          <img id="sota-benchmarking" src="./static/images/crea-llm-judge-quant.jpg" alt="SOTA Benchmarking Table" style="width: 100%; height: auto; margin-top: 20px;">
-          <p class="teaser-caption" style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 10px; margin-bottom: 20px;">
-           We compare <span class="dnerf">Context Canvas</span> with SOTA T2I models across key quantitative metrics. 
-            Our framework achieves superior scores in cultural and contextual fidelity, image coherence, and narrative-specific accuracy, 
-            demonstrating its robustness and adaptability across diverse domains.
+          <img src="./static/images/crea-ablation-figure.jpg" alt="Ablation Visual Results" style="width: 100%; height: auto; margin-top: 20px;">
+          <p class="teaser-caption" style="font-size: 1rem; text-align: justify;">
+            Visual comparisons from our ablation study indicate that omitting critical agents like the Art Critic or Refinement Strategist leads to significant losses in both image originality and thematic consistency.
           </p>
         </div>
       </div>
@@ -319,35 +230,36 @@
   </div>
 </section>
 
-
-  
+<!-- BibTeX Section -->
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
     <pre><code>@misc{venkatesh2024crea,
-              title={CREA: A Collaborative Multi-Agent Framework for Creative Image Editing and Generation, 
-              author={Kavana Venkatesh and Connor Dunlop and Pinar Yanardag},
-              year={2025},
-              eprint={2412.00000},
-              archivePrefix={arXiv},
-              primaryClass={cs.CV},
-              url={https://arxiv.org/abs/2412.00000} 
-        }
+  title={Context Canvas: Enhancing Text-to-Image Diffusion Models with Knowledge Graph-Based RAG}, 
+  author={Kavana Venkatesh and Connor Dunlop and Pinar Yanardag},
+  year={2024},
+  eprint={2412.09614},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2412.09614}
+}
 </code></pre>
   </div>
 </section>
 
-
+<!-- Footer Section -->
 <footer class="footer">
   <div class="container">
     <div class="content has-text-centered">
+      <p>
+        This website is adapted from <a href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website.
+      </p>
     </div>
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content">
           <p>
-            This website is adapted from <a
-              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website, 
+            © 2024 Virginia Tech. All rights reserved.
           </p>
         </div>
       </div>
