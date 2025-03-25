@@ -125,12 +125,10 @@
       <!-- Teaser image -->
       <img id="teaser-image" src="./static/images/teaser.jpg" alt="Teaser Image" style="width: 120%; height: auto;">
       <h2 class="subtitle teaser-caption" style="font-size: 1rem; text-align: justify;">
-      <span class="dnerf">Context Canvas</span> significantly improves image generation for domain-specific, complex characters that T2I models might
-        otherwise struggle with (top left). Additionally, our method enables disentangled image editing by extracting precise item descriptions,
-        such as transforming a simple “add a sword” prompt into a fire sword for the character Jambavan. It also adeptly captures relationships
-        by utilizing the graph, for instance, generating Jambavan’s daughter from a simple “with his daughter” prompt, without needing explicit
-        details about her appearance (bottom middle). Moreover, we introduce a novel RAG-based self-correction technique that further refines
-        images to improve visual and narrative accuracy (right).
+       We introduce <span class="dnerf">CREA</span>, the first creative image editing method through a novel collaborative multi-agentic framework that emulates the 
+       human creative process. Our approach is driven by collaborative interactions between specialized agents, such as a Creative Director and an Art Critic,
+       who communicate to refine and enhance the creative output. Supporting both image editing and generation, our framework can also be
+       integrated with personalization techniques to further enrich and expand creative workflows.
       </h2>
     </div>
   </div>
@@ -171,16 +169,9 @@
           <div class="publication-diagram" style="text-align: center;">
             <img id="method-diagram" src="./static/images/CREA-method-diagram.jpg" alt="Paper Method Diagram" style="width: 100%; height: auto; margin-top: 20px;">
             <p class="teaser-caption" style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 10px; margin-bottom: 20px; color: #444;">
-              Context Canvas introduces a novel knowledge graph-based RAG framework to 
-              enhance T2I diffusion models for context-driven generation and editing of images with complex, 
-              domain-specific concepts. The framework includes three key stages: 
-              knowledge graph-driven image generation, context-aware image editing, and a novel self-correction mechanism. 
-              In the first stage, user prompts are enriched with detailed character attributes and relationships from the knowledge graph, 
-              enabling precise depictions. The editing stage seamlessly integrates specific items or features into images by retrieving relevant contextual data. 
-              The self-correction process iteratively refines images using RAG context-guided prompts to ensure alignment 
-              with intended narratives and visual fidelity, addressing complex character traits and ensuring coherence across 
-              cultural and contextual dimensions.
-            </p>
+            <span class="dnerf">CREA Framework</span>. We introduce a collaborative multi-agent framework for creative image editing and generation. Our
+            framework consists of four stages, 1.a Pre-Generation Planning, 1.b Creative Image Generation/Editing, 2. Post-Generation Evaluationand 3. 
+              Self-Enhancement.</p>
           </div>
         </div>
       </div>
@@ -198,45 +189,20 @@
       </div>
     </div>
 
-    <!-- Image Generation Subheading -->
-    <div class="columns is-centered">
-      <div class="column has-text-centered">
-        <h3 class="title is-4">Image Generation</h3>
-      </div>
-    </div>
-
-    <!-- Image Generation Results -->
+    
     <div class="columns is-centered">
       <div class="column">
         <div class="content has-text-centered">
           <img id="image-generation" src="./static/images/qualitative-results.jpg" alt="Image Generation" style="width: 120%; height: auto;">
           <p class="teaser-caption">
           <p style="font-size: 1rem; line-height: 1.5; text-align: justify; margin-top: 10px; margin-bottom: 20px; color: #444;">
-            Context Canvas enhances image generation across diverse domains by integrating cultural and contextual details often missed by
-            standard models. For example, it accurately portrays rare Indian mythological characters like Tumburu with his horse-face and instrument,
-            and Gandabherunda as a dual-headed bird (top left). Domains such as mythology often comprise characters with multiple forms 
-            (eg.,celestial and human form). Our method picks up subtle cues from user prompts to depict such characters in the right form. For instance, 
-            Indian mythology character, 'Ganga' has a heavenly river form and a human form (Duality), both of which it represents accuratelyIt (left middle). 
-            Our method adapts to various mythologies, capturing Melinoe’s ghostly essence (left bottom) and Zhong Kui’s
-            fierce warrior form (middle bottom). In Project Gutenberg domains, such as Historical Fiction, Gothic Horror, and Fantasy, it captures
-            narrative-specific details like Captain Ahab’s ivory leg and gaunt expression (top 4th column) and Edmond Dant`es’ pale skin, coat, and ring
-            (top 3rd column). For Gothic Horror, it enhances Count Dracula’s menacing presence (middle 3rd column) and infers Manfred’s guilty,
-            dark persona (middle 4th column). Our approach faithfully represents Lilith with bat wings and snakes
-            and Lizarel with ethereal beauty and silvery hair (bottom right), demonstrating superior fidelity across cultural and literary domains.
-          </p>
+          Qualitative Results for Creative Image Editing and Generation Tasks. Qualitative results illustrating CREA’s disentangled
+          creative edits and generation across diverse objects and domains, demonstrating its ability to produce a wide range of creative variations.
+          For more results, please checkout our paper's Supplementary Material.</p>
         </div>
       </div>
     </div>
 
-
-    <!-- Self-Correction Subheading -->
-    <div class="columns is-centered">
-      <div class="column has-text-centered">
-        <h3 class="title is-4">Self-Correcting RAG-Guided Diffusion (SRD)</h3>
-      </div>
-    </div>
-    
-    <!-- Self-Correction Results -->
     <div class="columns is-centered">
       <div class="column">
         <div class="content has-text-centered">
@@ -253,26 +219,6 @@
         </div>
       </div>
     </div>
-
-
-    <!-- Image Editing -->
-    <div class="columns is-centered" id="image-editing" style="margin-top: 30px;">
-    <div class="container is-max-widescreen">
-      <div class="column">
-        <!-- Editing -->
-        <h3 class="title is-4 has-text-centered">Editing</h3>
-        <img id="editing-results" src="./static/images/image-editing.jpg" alt="Editing Results" style="width: 100%; height: auto; margin-top: 20px;">
-        <h2 class="subtitle result-caption" style="font-size: 1rem; text-align: justify; margin-top: 10px; max-width: 1200px; margin-left: auto; margin-right: auto;">
-          Our method enhances ControlNet’s disentangled editing by adding culturally accurate elements. In the first row, for
-          Jambavan, standard ControlNet introduces generic items. In the second row (bottom right), our approach accurately depicts
-          ‘his sword’ as a fire sword, ‘primary weapon’ as a mace and ‘his daughter’ as an adopted human. For ‘Shiva’ (bottom row), the system
-          intuitively adds his son ‘Ganesha’, snake ‘Vasuki’ and the ‘damaru’ in his mountain ‘abode’ without explicit instructions, while standard
-          ControlNet either adds generic objects or fails to make any edits at all.
-        </h2>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="section">
   <div class="container is-max-widescreen">
