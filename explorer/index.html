@@ -1,798 +1,679 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Explorer</title>
-    <style>
-        :root {
-            --bg-color: #f5f5f5;
-            --text-color: #121212;
-            --header-bg: rgba(0, 0, 0, 0.1);
-            --tab-bg: rgba(0, 0, 0, 0.1);
-            --tab-active-bg: rgba(255, 255, 255, 0.4);
-            --breadcrumb-bg: rgba(0, 0, 0, 0.1);
-            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            --card-shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.3);
-            --modal-bg: rgba(240, 240, 240, 0.95);
-            --btn-bg: rgba(0, 0, 0, 0.1);
-            --btn-hover-bg: rgba(0, 0, 0, 0.2);
-            --concept-label-bg: rgba(255, 255, 255, 0.8);
-        }
-
-        [data-theme="dark"] {
-            --bg-color: #121212;
-            --text-color: white;
-            --header-bg: rgba(0, 0, 0, 0.5);
-            --tab-bg: rgba(0, 0, 0, 0.3);
-            --tab-active-bg: rgba(255, 255, 255, 0.1);
-            --breadcrumb-bg: rgba(0, 0, 0, 0.3);
-            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            --card-shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.4);
-            --modal-bg: rgba(0, 0, 0, 0.9);
-            --btn-bg: rgba(255, 255, 255, 0.2);
-            --btn-hover-bg: rgba(255, 255, 255, 0.3);
-            --concept-label-bg: rgba(0, 0, 0, 0.7);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--header-bg);
-            padding-right: 20px;
-            z-index: 10;
-        }
-        
-        .tabs {
-            display: flex;
-            padding: 15px 20px 0;
-        }
-        
-        .tab {
-            padding: 12px 30px;
-            cursor: pointer;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s;
-            opacity: 0.7;
-            background-color: var(--tab-bg);
-            margin-right: 5px;
-        }
-        
-        .tab.active {
-            opacity: 1;
-            background-color: var(--tab-active-bg);
-        }
-        
-        .tab.generation {
-            border-top: 3px solid #4CAF50;
-        }
-        
-        .tab.editing {
-            border-top: 3px solid #2196F3;
-        }
-        
-        .theme-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .theme-toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
-        
-        .theme-toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .theme-toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-            display: flex;
-            align-items: center;
-            padding: 0 4px;
-            justify-content: space-between;
-        }
-        
-        .theme-toggle-slider svg {
-            height: 16px;
-            width: 16px;
-            z-index: 1;
-        }
-        
-        .sun-icon {
-            color: #f39c12;
-        }
-        
-        .moon-icon {
-            color: #f5f5f5;
-        }
-        
-        .theme-toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .theme-toggle-slider {
-            background-color: #2196F3;
-        }
-        
-        input:checked + .theme-toggle-slider:before {
-            transform: translateX(24px);
-        }
-        
-        .navigation-breadcrumb {
-            padding: 10px 20px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            background-color: var(--breadcrumb-bg);
-            transition: background-color 0.3s;
-        }
-        
-        .navigation-breadcrumb span {
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-        }
-        
-        .navigation-breadcrumb span:hover {
-            opacity: 1;
-        }
-        
-        .navigation-breadcrumb .separator {
-            opacity: 0.4;
-            cursor: default;
-        }
-        
-        .container {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .level {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.8s cubic-bezier(0.3, 0, 0.3, 1), opacity 0.5s ease;
-        }
-        
-        .level.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.9);
-        }
-        
-        .concept, .image-item {
-            cursor: pointer;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: var(--card-shadow);
-            position: relative;
-        }
-        
-        .concept:hover, .image-item:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-shadow-hover);
-        }
-        
-        /* Concept level */
-        .concept-level {
-            flex-wrap: wrap;
-            justify-content: center;
-            align-content: flex-start;
-            gap: 30px;
-            padding: 50px;
-            overflow-y: auto;
-        }
-        
-        .concept {
-            width: calc(33.333% - 30px);
-            max-width: 200px;
-            aspect-ratio: 1/1; /* Maintain aspect ratio */
-            background-position: center;
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            min-width: 150px;
-        }
-        
-        .concept-label {
-            background: var(--concept-label-bg);
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        
-        /* Image level */
-        .image-level {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            grid-gap: 20px;
-            padding: 40px;
-            overflow-y: auto;
-            height: 100%;
-            align-content: start;
-            width: 100%;
-        }
-        
-        .image-item {
-            width: 100%;
-            padding-bottom: 100%; /* Maintain aspect ratio */
-            background-position: center;
-            background-size: cover;
-            position: relative;
-        }
-        
-        .back-button {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 100;
-            background: var(--btn-bg);
-            color: var(--text-color);
-            border: none;
-            padding: 15px 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-            box-shadow: var(--card-shadow);
-        }
-        
-        .back-button:hover {
-            background: var(--btn-hover-bg);
-            box-shadow: var(--card-shadow-hover);
-            transform: translateY(-3px);
-        }
-        
-        .back-button.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px);
-        }
-        
-        .back-icon {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
-        }
-        
-        .zoom-effect {
-            animation: zoomEffect 0.8s cubic-bezier(0.2, 0, 0.3, 1);
-        }
-        
-        @keyframes zoomEffect {
-            0% {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-        
-        /* Generation concepts styling */
-        .generation-concepts .concept {
-            border: 3px solid #4CAF50;
-        }
-        
-        /* Editing concepts styling */
-        .editing-concepts .concept {
-            border: 3px solid #2196F3;
-        }
-        
-        /* Image modal styles */
-        .image-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--modal-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .image-modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .modal-image {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            border-radius: 5px;
-            box-shadow: var(--card-shadow);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-        
-        .image-modal.active .modal-image {
-            transform: scale(1);
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--btn-bg);
-            color: var(--text-color);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .close-modal:hover {
-            background: var(--btn-hover-bg);
-        }
-        
-        /* Media queries for responsive design */
-        @media (max-width: 768px) {
-            .concept {
-                width: calc(50% - 30px);
-                min-width: 130px;
-            }
-            
-            .image-level {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                padding: 20px;
-            }
-            
-            .tab {
-                padding: 10px 15px;
-                font-size: 0.9rem;
-            }
-            
-            .theme-toggle-switch {
-                width: 40px;
-                height: 22px;
-            }
-            
-            .theme-toggle-slider:before {
-                height: 16px;
-                width: 16px;
-            }
-            
-            input:checked + .theme-toggle-slider:before {
-                transform: translateX(18px);
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .concept {
-                width: 100%;
-                max-width: 200px;
-            }
-            
-            .back-button {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-            
-            .tabs {
-                padding: 10px 10px 0;
-                flex: 1;
-            }
-            
-            .tab {
-                padding: 8px 12px;
-                font-size: 0.8rem;
-            }
-            
-            .theme-toggle-switch {
-                width: 36px;
-            }
-            
-            .theme-toggle-text {
-                display: none;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Explorer</title>
+  <style>
+    :root {
+      --bg-color: #f5f5f5;
+      --text-color: #121212;
+      --header-bg: rgba(0, 0, 0, 0.1);
+      --tab-bg: rgba(0, 0, 0, 0.1);
+      --tab-active-bg: rgba(255, 255, 255, 0.4);
+      --breadcrumb-bg: rgba(0, 0, 0, 0.1);
+      --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      --card-shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.3);
+      --modal-bg: rgba(240, 240, 240, 0.95);
+      --btn-bg: rgba(0, 0, 0, 0.1);
+      --btn-hover-bg: rgba(0, 0, 0, 0.2);
+      --concept-label-bg: rgba(255, 255, 255, 0.8);
+    }
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --text-color: white;
+      --header-bg: rgba(0, 0, 0, 0.5);
+      --tab-bg: rgba(0, 0, 0, 0.3);
+      --tab-active-bg: rgba(255, 255, 255, 0.1);
+      --breadcrumb-bg: rgba(0, 0, 0, 0.3);
+      --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      --card-shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.4);
+      --modal-bg: rgba(0, 0, 0, 0.9);
+      --btn-bg: rgba(255, 255, 255, 0.2);
+      --btn-hover-bg: rgba(255, 255, 255, 0.3);
+      --concept-label-bg: rgba(0, 0, 0, 0.7);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--header-bg);
+      padding-right: 20px;
+      z-index: 10;
+    }
+    .tabs {
+      display: flex;
+      padding: 15px 20px 0;
+    }
+    .tab {
+      padding: 12px 30px;
+      cursor: pointer;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      opacity: 0.7;
+      background-color: var(--tab-bg);
+      margin-right: 5px;
+    }
+    .tab.active {
+      opacity: 1;
+      background-color: var(--tab-active-bg);
+    }
+    .tab.generation {
+      border-top: 3px solid #4CAF50;
+    }
+    .tab.editing {
+      border-top: 3px solid #2196F3;
+    }
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .theme-toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+    .theme-toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .theme-toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      justify-content: space-between;
+    }
+    .theme-toggle-slider svg {
+      height: 16px;
+      width: 16px;
+      z-index: 1;
+    }
+    .sun-icon {
+      color: #f39c12;
+    }
+    .moon-icon {
+      color: #f5f5f5;
+    }
+    .theme-toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .theme-toggle-slider {
+      background-color: #2196F3;
+    }
+    input:checked + .theme-toggle-slider:before {
+      transform: translateX(24px);
+    }
+    .navigation-breadcrumb {
+      padding: 10px 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background-color: var(--breadcrumb-bg);
+      transition: background-color 0.3s;
+    }
+    .navigation-breadcrumb span {
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+    .navigation-breadcrumb span:hover {
+      opacity: 1;
+    }
+    .navigation-breadcrumb .separator {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    .level {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.8s cubic-bezier(0.3, 0, 0.3, 1), opacity 0.5s ease;
+    }
+    .level.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.9);
+    }
+    .concept, .image-item {
+      cursor: pointer;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: var(--card-shadow);
+      position: relative;
+    }
+    .concept:hover, .image-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--card-shadow-hover);
+    }
+    /* Concept level */
+    .concept-level {
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: flex-start;
+      gap: 30px;
+      padding: 50px;
+      overflow-y: auto;
+    }
+    .concept {
+      width: calc(33.333% - 30px);
+      max-width: 200px;
+      aspect-ratio: 1/1;
+      background-position: center;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-width: 150px;
+    }
+    .concept-label {
+      background: var(--concept-label-bg);
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    /* Image level */
+    .image-level {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-gap: 20px;
+      padding: 40px;
+      overflow-y: auto;
+      height: 100%;
+      align-content: start;
+      width: 100%;
+    }
+    .image-item {
+      width: 100%;
+      padding-bottom: 100%;
+      background-position: center;
+      background-size: cover;
+      position: relative;
+    }
+    .back-button {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 100;
+      background: var(--btn-bg);
+      color: var(--text-color);
+      border: none;
+      padding: 15px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+      backdrop-filter: blur(5px);
+      box-shadow: var(--card-shadow);
+    }
+    .back-button:hover {
+      background: var(--btn-hover-bg);
+      box-shadow: var(--card-shadow-hover);
+      transform: translateY(-3px);
+    }
+    .back-button.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+    }
+    .back-icon {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+    .zoom-effect {
+      animation: zoomEffect 0.8s cubic-bezier(0.2, 0, 0.3, 1);
+    }
+    @keyframes zoomEffect {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .generation-concepts .concept {
+      border: 3px solid #4CAF50;
+    }
+    .editing-concepts .concept {
+      border: 3px solid #2196F3;
+    }
+    .image-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--modal-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .image-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-image {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      border-radius: 5px;
+      box-shadow: var(--card-shadow);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    .image-modal.active .modal-image {
+      transform: scale(1);
+    }
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--btn-bg);
+      color: var(--text-color);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .close-modal:hover {
+      background: var(--btn-hover-bg);
+    }
+    @media (max-width: 768px) {
+      .concept {
+        width: calc(50% - 30px);
+        min-width: 130px;
+      }
+      .image-level {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        padding: 20px;
+      }
+      .tab {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+      }
+      .theme-toggle-switch {
+        width: 40px;
+        height: 22px;
+      }
+      .theme-toggle-slider:before {
+        height: 16px;
+        width: 16px;
+      }
+      input:checked + .theme-toggle-slider:before {
+        transform: translateX(18px);
+      }
+    }
+    @media (max-width: 480px) {
+      .concept {
+        width: 100%;
+        max-width: 200px;
+      }
+      .back-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+      .tabs {
+        padding: 10px 10px 0;
+        flex: 1;
+      }
+      .tab {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+      }
+      .theme-toggle-switch {
+        width: 36px;
+      }
+      .theme-toggle-text {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <div class="tabs">
-            <div class="tab generation active" data-category="generation">Generation</div>
-            <div class="tab editing" data-category="editing">Editing</div>
-        </div>
-        
-        <div class="theme-toggle">
-            <span class="theme-toggle-text">Theme</span>
-            <label class="theme-toggle-switch">
-                <input type="checkbox" id="theme-toggle-input">
-                <span class="theme-toggle-slider">
-                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                </span>
-            </label>
-        </div>
+  <div class="header">
+    <div class="tabs">
+      <div class="tab generation active" data-category="generation">Generation</div>
+      <div class="tab editing" data-category="editing">Editing</div>
     </div>
-    
-    <div class="navigation-breadcrumb">
-        <span id="home-link">Home</span>
+    <div class="theme-toggle">
+      <span class="theme-toggle-text">Theme</span>
+      <label class="theme-toggle-switch">
+        <input type="checkbox" id="theme-toggle-input" />
+        <span class="theme-toggle-slider">
+          <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </span>
+      </label>
     </div>
-    
-    <div class="container">
-        <!-- Concept Level for Generation -->
-        <div class="level concept-level generation-concepts" data-for="generation">
-            <div class="concept" style="background-image: url('/explorer/images/generation/couch/47.png')" data-concept="couch" data-category="generation">
-                <div class="concept-label">Couch</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/generation/chair/44.png')" data-concept="chair" data-category="generation">
-                <div class="concept-label">Chair</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/generation/car/27.png')" data-concept="car" data-category="generation">
-                <div class="concept-label">Car</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/generation/monster/49.png')" data-concept="monster" data-category="generation">
-                <div class="concept-label">Monster</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/generation/mug/26.png')" data-concept="mug" data-category="generation">
-                <div class="concept-label">Mug</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/generation/table/26.png')" data-concept="table" data-category="generation">
-                <div class="concept-label">Table</div>
-            </div>
-        </div>
-        
-        <!-- Concept Level for Editing -->
-        <div class="level concept-level editing-concepts hidden" data-for="editing">
-            <div class="concept" style="background-image: url('/explorer/images/editing/bike/26.png')" data-concept="bike" data-category="editing">
-                <div class="concept-label">Bike</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/editing/couch/7.jpg')" data-concept="couch" data-category="editing">
-                <div class="concept-label">Couch</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/editing/bowl/22.png')" data-concept="bowl" data-category="editing">
-                <div class="concept-label">Bowl</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/editing/guitar/10.jpg')" data-concept="guitar" data-category="editing">
-                <div class="concept-label">Guitar</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/editing/helmet/25.png')" data-concept="helmet" data-category="editing">
-                <div class="concept-label">Helmet</div>
-            </div>
-            <div class="concept" style="background-image: url('/explorer/images/editing/table/11.jpg')" data-concept="table" data-category="editing">
-                <div class="concept-label">Table</div>
-            </div>
-        </div>
-        
-        <!-- Image Level (dynamically populated by JavaScript) -->
-        <div class="level image-level hidden" id="image-container">
-            <!-- Images will be populated here -->
-        </div>
+  </div>
+
+  <div class="navigation-breadcrumb">
+    <span id="home-link">Home</span>
+  </div>
+
+  <div class="container">
+    <!-- Generation Concepts -->
+    <div class="level concept-level generation-concepts" data-for="generation">
+      <div class="concept" style="background-image: url('/explorer/images/generation/couch/47.png')" data-concept="couch" data-category="generation">
+        <div class="concept-label">Couch</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/generation/chair/44.png')" data-concept="chair" data-category="generation">
+        <div class="concept-label">Chair</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/generation/car/27.png')" data-concept="car" data-category="generation">
+        <div class="concept-label">Car</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/generation/monster/49.png')" data-concept="monster" data-category="generation">
+        <div class="concept-label">Monster</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/generation/mug/26.png')" data-concept="mug" data-category="generation">
+        <div class="concept-label">Mug</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/generation/table/26.png')" data-concept="table" data-category="generation">
+        <div class="concept-label">Table</div>
+      </div>
     </div>
-    
-    <!-- Back Button -->
-    <button class="back-button hidden" id="back-button">
-        <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M12 2.0996A9.9 9.9 0 0 0 2.0996 12A9.9 9.9 0 0 0 12 21.9A9.9 9.9 0 0 0 21.9 12A9.9 9.9 0 0 0 12 2.0996zM16.5 12.75H10.125L12.683 15.308L11.625 16.366L7.25897 12L11.625 7.63397L12.683 8.69197L10.125 11.25H16.5V12.75z" fill="currentColor"/>
-        </svg>
-        <span id="back-button-text">Back</span>
+
+    <!-- Editing Concepts -->
+    <div class="level concept-level editing-concepts hidden" data-for="editing">
+      <div class="concept" style="background-image: url('/explorer/images/editing/bike/26.png')" data-concept="bike" data-category="editing">
+        <div class="concept-label">Bike</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/editing/couch/7.jpg')" data-concept="couch" data-category="editing">
+        <div class="concept-label">Couch</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/editing/bowl/22.png')" data-concept="bowl" data-category="editing">
+        <div class="concept-label">Bowl</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/editing/guitar/10.jpg')" data-concept="guitar" data-category="editing">
+        <div class="concept-label">Guitar</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/editing/helmet/25.png')" data-concept="helmet" data-category="editing">
+        <div class="concept-label">Helmet</div>
+      </div>
+      <div class="concept" style="background-image: url('/explorer/images/editing/table/11.jpg')" data-concept="table" data-category="editing">
+        <div class="concept-label">Table</div>
+      </div>
+    </div>
+
+    <!-- Image Level (populated dynamically) -->
+    <div class="level image-level hidden" id="image-container">
+      <!-- Images will be added here -->
+    </div>
+  </div>
+
+  <!-- Back Button -->
+  <button class="back-button hidden" id="back-button">
+    <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M12 2.0996A9.9 9.9 0 0 0 2.0996 12A9.9 9.9 0 0 0 12 21.9A9.9 9.9 0 0 0 21.9 12A9.9 9.9 0 0 0 12 2.0996zM16.5 12.75H10.125L12.683 15.308L11.625 16.366L7.25897 12L11.625 7.63397L12.683 8.69197L10.125 11.25H16.5V12.75z" fill="currentColor"/>
+    </svg>
+    <span id="back-button-text">Back</span>
+  </button>
+
+  <!-- Image Modal -->
+  <div class="image-modal" id="image-modal">
+    <img src="" alt="Selected image" class="modal-image" id="modal-image">
+    <button class="close-modal" id="close-modal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
     </button>
-    
-    <!-- Image Modal -->
-    <div class="image-modal" id="image-modal">
-        <img src="" alt="Selected image" class="modal-image" id="modal-image">
-        <button class="close-modal" id="close-modal">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
-    </div>
-    
-    <script>
-        // Navigation state
-        let currentLevel = 'concept';
-        let currentCategory = 'generation'; // Default to generation
-        let currentConcept = null;
-        
-        // Get DOM elements
-        const generationConceptsLevel = document.querySelector('.generation-concepts');
-        const editingConceptsLevel = document.querySelector('.editing-concepts');
-        const imageLevel = document.querySelector('.image-level');
-        const breadcrumb = document.querySelector('.navigation-breadcrumb');
-        const homeLink = document.getElementById('home-link');
-        const backButton = document.getElementById('back-button');
-        const backButtonText = document.getElementById('back-button-text');
-        const imageModal = document.getElementById('image-modal');
-        const modalImage = document.getElementById('modal-image');
-        const closeModal = document.getElementById('close-modal');
-        const tabs = document.querySelectorAll('.tab');
-        const themeToggleInput = document.getElementById('theme-toggle-input');
-        
-        // Theme Toggle functionality
-        themeToggleInput.addEventListener('change', function() {
-            if (this.checked) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-            }
-        });
-        
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        if (savedTheme === 'dark') {
-            themeToggleInput.checked = true;
-        }
-        
-        // Add event listeners for tab selection
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                const categoryName = this.dataset.category;
-                // Update active tab
-                tabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                // Change category
-                navigateToCategory(categoryName);
-            });
-        });
-        
-        // Add event listeners for concept selection
-        document.querySelectorAll('.concept').forEach(concept => {
-            concept.addEventListener('click', function() {
-                const conceptName = this.dataset.concept;
-                const categoryName = this.dataset.category;
-                navigateToConcept(categoryName, conceptName);
-            });
-        });
-        
-        // Home link
-        homeLink.addEventListener('click', () => {
-            navigateToHome();
-        });
-        
-        // Back button - dynamically changes behavior based on current level
-        backButton.addEventListener('click', () => {
-            if (currentLevel === 'image') {
-                navigateToCategory(currentCategory);
-            }
-        });
-        
-        // Close modal
-        closeModal.addEventListener('click', () => {
-            imageModal.classList.remove('active');
-        });
-        
-        // Close modal on click outside image
-        imageModal.addEventListener('click', (e) => {
-            if (e.target === imageModal) {
-                imageModal.classList.remove('active');
-            }
-        });
-        
-        // Navigation functions
-        function navigateToHome() {
-            // Find and click the tab for the current category
-            const currentTab = document.querySelector(`.tab.${currentCategory}`);
-            if (currentTab) {
-                currentTab.click();
-            }
-        }
-        
-        function navigateToCategory(categoryName) {
-            currentLevel = 'concept';
-            currentCategory = categoryName;
-            currentConcept = null;
-            
-            // Hide all concept levels first
-            generationConceptsLevel.classList.add('hidden');
-            editingConceptsLevel.classList.add('hidden');
-            imageLevel.classList.add('hidden');
-            
-            // Then show the appropriate concept level
-            if (categoryName === 'generation') {
-                generationConceptsLevel.classList.remove('hidden');
-                generationConceptsLevel.classList.add('zoom-effect');
-                setTimeout(() => generationConceptsLevel.classList.remove('zoom-effect'), 800);
-            } else if (categoryName === 'editing') {
-                editingConceptsLevel.classList.remove('hidden');
-                editingConceptsLevel.classList.add('zoom-effect');
-                setTimeout(() => editingConceptsLevel.classList.remove('zoom-effect'), 800);
-            }
-            
-            // Hide back button at concept level
-            backButton.classList.add('hidden');
-            
-            // Update breadcrumb
-            updateBreadcrumb();
-        }
-        
-        function navigateToConcept(categoryName, conceptName) {
-            currentLevel = 'image';
-            currentCategory = categoryName;
-            currentConcept = conceptName;
-            
-            // Hide all other levels
-            generationConceptsLevel.classList.add('hidden');
-            editingConceptsLevel.classList.add('hidden');
-            
-            // Load images for this concept
-            loadImagesForConcept(categoryName, conceptName);
-            
-            // Show image level
-            imageLevel.classList.remove('hidden');
-            imageLevel.classList.add('zoom-effect');
-            setTimeout(() => imageLevel.classList.remove('zoom-effect'), 800);
-            
-            // Show back button
-            backButton.classList.remove('hidden');
-            backButtonText.textContent = `Back to ${capitalizeFirstLetter(categoryName)}`;
-            
-            // Update breadcrumb
-            updateBreadcrumb();
-        }
-        
-        async function getImagesFromFolder(folderPath) {
-            try {
-                // Fetch the static JSON manifest with your image data
-                const response = await fetch('/explorer/images.json');
-                const data = await response.json();
-                // Return the array of images for the requested folder, or an empty array if not found
-                const images = data[folderPath] || [];
+  </div>
 
-                for (let i = images.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [images[i], images[j]] = [images[j], images[i]];
-                }
+  <script>
+    // Global state
+    let currentLevel = 'concept';
+    let currentCategory = 'generation';
+    let currentConcept = null;
 
-                return images;
-            } catch (error) {
-                console.error('Error loading images:', error);
-                // For demo purposes, return some placeholder images
-                return Array(8).fill().map((_, i) => `/api/placeholder/220/220`);
-            }
+    // Cache DOM elements
+    const conceptContainers = {
+      generation: document.querySelector('.generation-concepts'),
+      editing: document.querySelector('.editing-concepts')
+    };
+    const imageLevel = document.querySelector('.image-level');
+    const breadcrumb = document.querySelector('.navigation-breadcrumb');
+    const homeLink = document.getElementById('home-link');
+    const backButton = document.getElementById('back-button');
+    const backButtonText = document.getElementById('back-button-text');
+    const imageModal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    const closeModal = document.getElementById('close-modal');
+    const tabs = document.querySelectorAll('.tab');
+    const themeToggleInput = document.getElementById('theme-toggle-input');
+
+    // Helper: Apply zoom effect
+    function applyZoomEffect(element) {
+      element.classList.add('zoom-effect');
+      setTimeout(() => element.classList.remove('zoom-effect'), 800);
+    }
+
+    // Theme toggle
+    themeToggleInput.addEventListener('change', () => {
+      const theme = themeToggleInput.checked ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+    });
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeToggleInput.checked = savedTheme === 'dark';
+
+    // Tab selection
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        navigateToCategory(tab.dataset.category);
+      });
+    });
+
+    // Event delegation for concept selection
+    Object.values(conceptContainers).forEach(container => {
+      container.addEventListener('click', (e) => {
+        const conceptEl = e.target.closest('.concept');
+        if (conceptEl) {
+          navigateToConcept(conceptEl.dataset.category, conceptEl.dataset.concept);
         }
-        
-        async function loadImagesForConcept(categoryName, conceptName) {
-            // Clear current images
-            imageLevel.innerHTML = '';
-            
-            // Get images from folder
-            const folderPath = `images/${categoryName}/${conceptName}`;
-            const images = await getImagesFromFolder(folderPath);
-            
-            // Create image elements
-            images.forEach((imagePath, index) => {
-                const imageElement = document.createElement('div');
-                imageElement.className = 'image-item';
-                imageElement.style.backgroundImage = `url(${imagePath})`;
-                imageElement.dataset.src = imagePath;
-                
-                imageElement.addEventListener('click', () => {
-                    openImageModal(imagePath);
-                });
-                
-                imageLevel.appendChild(imageElement);
-            });
+      });
+    });
+
+    // Home link event
+    homeLink.addEventListener('click', navigateToHome);
+
+    // Back button event
+    backButton.addEventListener('click', () => {
+      if (currentLevel === 'image') navigateToCategory(currentCategory);
+    });
+
+    // Modal events
+    closeModal.addEventListener('click', () => imageModal.classList.remove('active'));
+    imageModal.addEventListener('click', (e) => {
+      if (e.target === imageModal) imageModal.classList.remove('active');
+    });
+
+    // Navigation functions
+    function navigateToHome() {
+      const currentTab = document.querySelector(`.tab.${currentCategory}`);
+      if (currentTab) currentTab.click();
+    }
+
+    function navigateToCategory(categoryName) {
+      currentLevel = 'concept';
+      currentCategory = categoryName;
+      currentConcept = null;
+
+      // Hide all concept containers and image level
+      Object.values(conceptContainers).forEach(container => container.classList.add('hidden'));
+      imageLevel.classList.add('hidden');
+
+      // Show the selected container with animation
+      const container = conceptContainers[categoryName];
+      container.classList.remove('hidden');
+      applyZoomEffect(container);
+
+      backButton.classList.add('hidden');
+      updateBreadcrumb();
+    }
+
+    function navigateToConcept(categoryName, conceptName) {
+      currentLevel = 'image';
+      currentCategory = categoryName;
+      currentConcept = conceptName;
+
+      // Hide all concept containers
+      Object.values(conceptContainers).forEach(container => container.classList.add('hidden'));
+
+      // Load images and show image level
+      loadImagesForConcept(categoryName, conceptName);
+      imageLevel.classList.remove('hidden');
+      applyZoomEffect(imageLevel);
+
+      backButton.classList.remove('hidden');
+      backButtonText.textContent = `Back to ${capitalizeFirstLetter(categoryName)}`;
+      updateBreadcrumb();
+    }
+
+    async function getImagesFromFolder(folderPath) {
+      try {
+        const response = await fetch('/explorer/images.json');
+        const data = await response.json();
+        const images = data[folderPath] || [];
+        // Shuffle images using Fisher-Yates algorithm
+        for (let i = images.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [images[i], images[j]] = [images[j], images[i]];
         }
-        
-        function openImageModal(imageSrc) {
-            modalImage.src = imageSrc;
-            imageModal.classList.add('active');
-        }
-        
-        function updateBreadcrumb() {
-            // Clear existing breadcrumb
-            while (breadcrumb.children.length > 0) {
-                breadcrumb.removeChild(breadcrumb.lastChild);
-            }
-            
-            // Add category
-            const categoryLink = document.createElement('span');
-            categoryLink.textContent = capitalizeFirstLetter(currentCategory);
-            
-            if (currentLevel === 'image') {
-                categoryLink.addEventListener('click', () => navigateToCategory(currentCategory));
-            }
-            
-            breadcrumb.appendChild(categoryLink);
-            
-            // Add concept if applicable
-            if (currentConcept) {
-                addBreadcrumbSeparator();
-                const conceptLink = document.createElement('span');
-                conceptLink.textContent = capitalizeFirstLetter(currentConcept);
-                breadcrumb.appendChild(conceptLink);
-            }
-        }
-        
-        function addBreadcrumbSeparator() {
-            const separator = document.createElement('span');
-            separator.textContent = '>';
-            separator.className = 'separator';
-            breadcrumb.appendChild(separator);
-        }
-        
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-        
-        // Initialize the app - start with Generation tab by default
-        navigateToCategory('generation');
-    </script>
+        return images;
+      } catch (error) {
+        console.error('Error loading images:', error);
+        return Array(8).fill().map(() => `/api/placeholder/220/220`);
+      }
+    }
+
+    async function loadImagesForConcept(categoryName, conceptName) {
+      imageLevel.innerHTML = '';
+      const folderPath = `images/${categoryName}/${conceptName}`;
+      const images = await getImagesFromFolder(folderPath);
+      images.forEach((imagePath) => {
+        const imageElement = document.createElement('div');
+        imageElement.className = 'image-item';
+        imageElement.style.backgroundImage = `url(${imagePath})`;
+        imageElement.addEventListener('click', () => openImageModal(imagePath));
+        imageLevel.appendChild(imageElement);
+      });
+    }
+
+    function openImageModal(imageSrc) {
+      modalImage.src = imageSrc;
+      imageModal.classList.add('active');
+    }
+
+    function updateBreadcrumb() {
+      breadcrumb.innerHTML = '';
+      const categoryLink = document.createElement('span');
+      categoryLink.textContent = capitalizeFirstLetter(currentCategory);
+      if (currentLevel === 'image') {
+        categoryLink.addEventListener('click', () => navigateToCategory(currentCategory));
+      }
+      breadcrumb.appendChild(categoryLink);
+      if (currentConcept) {
+        addBreadcrumbSeparator();
+        const conceptLink = document.createElement('span');
+        conceptLink.textContent = capitalizeFirstLetter(currentConcept);
+        breadcrumb.appendChild(conceptLink);
+      }
+    }
+
+    function addBreadcrumbSeparator() {
+      const separator = document.createElement('span');
+      separator.textContent = '>';
+      separator.className = 'separator';
+      breadcrumb.appendChild(separator);
+    }
+
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    // Initialize the app with the default category
+    navigateToCategory('generation');
+  </script>
 </body>
 </html>
