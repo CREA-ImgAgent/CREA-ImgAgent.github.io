@@ -223,13 +223,13 @@
         
         /* Generation theme */
         .category.generation {
-            background-image: url('/images/generation.png');
+            background-image: url('/explorer/images/generation.png');
             border: 4px solid #4CAF50;
         }
         
         /* Editing theme */
         .category.editing {
-            background-image: url('/images/editing.png');
+            background-image: url('/explorer/images/editing.png');
             border: 4px solid #2196F3;
         }
         
@@ -337,44 +337,44 @@
         
         <!-- Concept Level for Generation -->
         <div class="level concept-level generation-concepts hidden" data-for="generation">
-            <div class="concept" style="background-image: url('/images/generation/couch/47.png')" data-concept="couch" data-category="generation">
+            <div class="concept" style="background-image: url('/explorer/images/generation/couch/47.png')" data-concept="couch" data-category="generation">
                 <div class="concept-label">Couch</div>
             </div>
-            <div class="concept" style="background-image: url('/images/generation/chair/44.png')" data-concept="chair" data-category="generation">
+            <div class="concept" style="background-image: url('/explorer/images/generation/chair/44.png')" data-concept="chair" data-category="generation">
                 <div class="concept-label">Chair</div>
             </div>
-            <div class="concept" style="background-image: url('/images/generation/car/27.png')" data-concept="car" data-category="generation">
+            <div class="concept" style="background-image: url('/explorer/images/generation/car/27.png')" data-concept="car" data-category="generation">
                 <div class="concept-label">Car</div>
             </div>
-            <div class="concept" style="background-image: url('/images/generation/monster/49.png')" data-concept="monster" data-category="generation">
+            <div class="concept" style="background-image: url('/explorer/images/generation/monster/49.png')" data-concept="monster" data-category="generation">
                 <div class="concept-label">Monster</div>
             </div>
-            <div class="concept" style="background-image: url('/images/generation/mug/26.png')" data-concept="mug" data-category="generation">
+            <div class="concept" style="background-image: url('/explorer/images/generation/mug/26.png')" data-concept="mug" data-category="generation">
                 <div class="concept-label">Mug</div>
             </div>
-            <div class="concept" style="background-image: url('/images/generation/table/26.png')" data-concept="table" data-category="generation">
+            <div class="concept" style="background-image: url('/explorer/images/generation/table/26.png')" data-concept="table" data-category="generation">
                 <div class="concept-label">Table</div>
             </div>
         </div>
         
         <!-- Concept Level for Editing -->
         <div class="level concept-level editing-concepts hidden" data-for="editing">
-            <div class="concept" style="background-image: url('/images/editing/bike/26.png')" data-concept="bike" data-category="editing">
+            <div class="concept" style="background-image: url('/explorer/images/editing/bike/26.png')" data-concept="bike" data-category="editing">
                 <div class="concept-label">Bike</div>
             </div>
-            <div class="concept" style="background-image: url('/images/editing/couch/7.jpg')" data-concept="couch" data-category="editing">
+            <div class="concept" style="background-image: url('/explorer/images/editing/couch/7.jpg')" data-concept="couch" data-category="editing">
                 <div class="concept-label">Couch</div>
             </div>
-            <div class="concept" style="background-image: url('/images/editing/bowl/22.png')" data-concept="bowl" data-category="editing">
+            <div class="concept" style="background-image: url('/explorer/images/editing/bowl/22.png')" data-concept="bowl" data-category="editing">
                 <div class="concept-label">Bowl</div>
             </div>
-            <div class="concept" style="background-image: url('/images/editing/guitar/10.jpg')" data-concept="guitar" data-category="editing">
+            <div class="concept" style="background-image: url('/explorer/images/editing/guitar/10.jpg')" data-concept="guitar" data-category="editing">
                 <div class="concept-label">Guitar</div>
             </div>
-            <div class="concept" style="background-image: url('/images/editing/helmet/25.png')" data-concept="helmet" data-category="editing">
+            <div class="concept" style="background-image: url('/explorer/images/editing/helmet/25.png')" data-concept="helmet" data-category="editing">
                 <div class="concept-label">Helmet</div>
             </div>
-            <div class="concept" style="background-image: url('/images/editing/table/11.jpg')" data-concept="table" data-category="editing">
+            <div class="concept" style="background-image: url('/explorer/images/editing/table/11.jpg')" data-concept="table" data-category="editing">
                 <div class="concept-label">Table</div>
             </div>
         </div>
@@ -551,7 +551,7 @@
         async function getImagesFromFolder(folderPath) {
             try {
                 // Fetch the static JSON manifest with your image data
-                const response = await fetch('/images.json');
+                const response = await fetch('/explorer/images.json');
                 const data = await response.json();
                 // Return the array of images for the requested folder, or an empty array if not found
                 const images = data[folderPath] || [];
