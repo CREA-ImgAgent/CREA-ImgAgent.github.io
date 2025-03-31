@@ -21,24 +21,38 @@
             flex-direction: column;
         }
         
-        .header {
-            padding: 20px;
-            text-align: center;
+        .tabs {
+            display: flex;
             background-color: rgba(0, 0, 0, 0.5);
+            padding: 15px 20px 0;
             z-index: 10;
         }
         
-        .header h1 {
-            font-size: 1.75rem;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
+        .tab {
+            padding: 12px 30px;
+            cursor: pointer;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            opacity: 0.7;
+            background-color: rgba(0, 0, 0, 0.3);
+            margin-right: 5px;
         }
         
-        .header p {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            max-width: 600px;
-            margin: 0 auto;
+        .tab.active {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab.generation {
+            border-top: 3px solid #4CAF50;
+        }
+        
+        .tab.editing {
+            border-top: 3px solid #2196F3;
         }
         
         .navigation-breadcrumb {
@@ -86,7 +100,7 @@
             transform: scale(0.9);
         }
         
-        .category, .concept, .image-item {
+        .concept, .image-item {
             cursor: pointer;
             border-radius: 10px;
             overflow: hidden;
@@ -95,41 +109,9 @@
             position: relative;
         }
         
-        .category:hover, .concept:hover, .image-item:hover {
+        .concept:hover, .image-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-        }
-        
-        /* Category level */
-        .category-level {
-            gap: 5%;
-            padding: 20px;
-            overflow-y: auto;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .category {
-            width: 40%;
-            max-width: 300px;
-            aspect-ratio: 2/3; /* Maintain aspect ratio */
-            background-position: center;
-            background-size: cover;
-            position: relative;
-            flex-shrink: 0;
-        }
-        
-        .category-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-            text-align: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
         }
         
         /* Concept level */
@@ -208,6 +190,12 @@
             transform: translateY(-3px);
         }
         
+        .back-button.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+        
         .back-icon {
             width: 24px;
             height: 24px;
@@ -227,18 +215,6 @@
                 transform: scale(1);
                 opacity: 1;
             }
-        }
-        
-        /* Generation theme */
-        .category.generation {
-            background-image: url('/explorer/images/generation.png');
-            border: 4px solid #4CAF50;
-        }
-        
-        /* Editing theme */
-        .category.editing {
-            background-image: url('/explorer/images/editing.png');
-            border: 4px solid #2196F3;
         }
         
         /* Generation concepts styling */
@@ -310,17 +286,6 @@
         
         /* Media queries for responsive design */
         @media (max-width: 768px) {
-            .category-level {
-                flex-direction: column;
-                gap: 30px;
-                overflow-y: auto;
-            }
-            
-            .category {
-                width: 80%;
-                max-width: 250px;
-            }
-            
             .concept {
                 width: calc(50% - 30px);
                 min-width: 130px;
@@ -331,11 +296,8 @@
                 padding: 20px;
             }
             
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .header p {
+            .tab {
+                padding: 10px 15px;
                 font-size: 0.9rem;
             }
         }
@@ -346,22 +308,26 @@
                 max-width: 200px;
             }
             
-            .category-label {
-                font-size: 1.4rem;
-                padding: 15px;
-            }
-            
             .back-button {
                 padding: 10px 20px;
                 font-size: 0.9rem;
+            }
+            
+            .tabs {
+                padding: 10px 10px 0;
+            }
+            
+            .tab {
+                padding: 8px 12px;
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>CREATIVE IMAGE EXPLORATION</h1>
-        <p>Navigate through generated and edited images produced using the CREA pipeline.</p>
+    <div class="tabs">
+        <div class="tab generation active" data-category="generation">Generation</div>
+        <div class="tab editing" data-category="editing">Editing</div>
     </div>
     
     <div class="navigation-breadcrumb">
@@ -369,18 +335,8 @@
     </div>
     
     <div class="container">
-        <!-- Category Level -->
-        <div class="level category-level">
-            <div class="category generation" data-category="generation">
-                <div class="category-label">Generation</div>
-            </div>
-            <div class="category editing" data-category="editing">
-                <div class="category-label">Editing</div>
-            </div>
-        </div>
-        
         <!-- Concept Level for Generation -->
-        <div class="level concept-level generation-concepts hidden" data-for="generation">
+        <div class="level concept-level generation-concepts" data-for="generation">
             <div class="concept" style="background-image: url('/explorer/images/generation/couch/47.png')" data-concept="couch" data-category="generation">
                 <div class="concept-label">Couch</div>
             </div>
@@ -429,12 +385,12 @@
         </div>
     </div>
     
-    <!-- Home Button -->
-    <button class="back-button" id="back-button">
+    <!-- Back Button -->
+    <button class="back-button hidden" id="back-button">
         <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M12 2.0996A9.9 9.9 0 0 0 2.0996 12A9.9 9.9 0 0 0 12 21.9A9.9 9.9 0 0 0 21.9 12A9.9 9.9 0 0 0 12 2.0996zM16.5 12.75H10.125L12.683 15.308L11.625 16.366L7.25897 12L11.625 7.63397L12.683 8.69197L10.125 11.25H16.5V12.75z" fill="currentColor"/>
         </svg>
-        <span id="back-button-text">Back to Home</span>
+        <span id="back-button-text">Back</span>
     </button>
     
     <!-- Image Modal -->
@@ -450,12 +406,11 @@
     
     <script>
         // Navigation state
-        let currentLevel = 'category';
-        let currentCategory = null;
+        let currentLevel = 'concept';
+        let currentCategory = 'generation'; // Default to generation
         let currentConcept = null;
         
         // Get DOM elements
-        const categoryLevel = document.querySelector('.category-level');
         const generationConceptsLevel = document.querySelector('.generation-concepts');
         const editingConceptsLevel = document.querySelector('.editing-concepts');
         const imageLevel = document.querySelector('.image-level');
@@ -466,11 +421,16 @@
         const imageModal = document.getElementById('image-modal');
         const modalImage = document.getElementById('modal-image');
         const closeModal = document.getElementById('close-modal');
+        const tabs = document.querySelectorAll('.tab');
         
-        // Add event listeners for category selection
-        document.querySelectorAll('.category').forEach(category => {
-            category.addEventListener('click', function() {
+        // Add event listeners for tab selection
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
                 const categoryName = this.dataset.category;
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                // Change category
                 navigateToCategory(categoryName);
             });
         });
@@ -493,10 +453,6 @@
         backButton.addEventListener('click', () => {
             if (currentLevel === 'image') {
                 navigateToCategory(currentCategory);
-            } else if (currentLevel === 'concept') {
-                navigateToHome();
-            } else {
-                navigateToHome();
             }
         });
         
@@ -512,28 +468,13 @@
             }
         });
         
-        // Add resize event listener to handle zoom changes
-        window.addEventListener('resize', () => {
-            // No specific action needed as CSS handles responsiveness
-        });
-        
         // Navigation functions
         function navigateToHome() {
-            currentLevel = 'category';
-            currentCategory = null;
-            currentConcept = null;
-            
-            // Update UI
-            categoryLevel.classList.remove('hidden');
-            generationConceptsLevel.classList.add('hidden');
-            editingConceptsLevel.classList.add('hidden');
-            imageLevel.classList.add('hidden');
-            
-            // Update back button
-            backButtonText.textContent = 'Back to Home';
-            
-            // Update breadcrumb
-            updateBreadcrumb();
+            // Find and click the tab for the current category
+            const currentTab = document.querySelector(`.tab.${currentCategory}`);
+            if (currentTab) {
+                currentTab.click();
+            }
         }
         
         function navigateToCategory(categoryName) {
@@ -541,8 +482,7 @@
             currentCategory = categoryName;
             currentConcept = null;
             
-            // Hide all levels first
-            categoryLevel.classList.add('hidden');
+            // Hide all concept levels first
             generationConceptsLevel.classList.add('hidden');
             editingConceptsLevel.classList.add('hidden');
             imageLevel.classList.add('hidden');
@@ -558,8 +498,8 @@
                 setTimeout(() => editingConceptsLevel.classList.remove('zoom-effect'), 800);
             }
             
-            // Update back button
-            backButtonText.textContent = 'Back to Home';
+            // Hide back button at concept level
+            backButton.classList.add('hidden');
             
             // Update breadcrumb
             updateBreadcrumb();
@@ -571,7 +511,6 @@
             currentConcept = conceptName;
             
             // Hide all other levels
-            categoryLevel.classList.add('hidden');
             generationConceptsLevel.classList.add('hidden');
             editingConceptsLevel.classList.add('hidden');
             
@@ -583,7 +522,8 @@
             imageLevel.classList.add('zoom-effect');
             setTimeout(() => imageLevel.classList.remove('zoom-effect'), 800);
             
-            // Update back button
+            // Show back button
+            backButton.classList.remove('hidden');
             backButtonText.textContent = `Back to ${capitalizeFirstLetter(categoryName)}`;
             
             // Update breadcrumb
@@ -640,19 +580,20 @@
         }
         
         function updateBreadcrumb() {
-            // Clear existing breadcrumb (except home)
-            while (breadcrumb.children.length > 1) {
+            // Clear existing breadcrumb
+            while (breadcrumb.children.length > 0) {
                 breadcrumb.removeChild(breadcrumb.lastChild);
             }
             
-            // Add category if applicable
-            if (currentCategory) {
-                addBreadcrumbSeparator();
-                const categoryLink = document.createElement('span');
-                categoryLink.textContent = capitalizeFirstLetter(currentCategory);
+            // Add category
+            const categoryLink = document.createElement('span');
+            categoryLink.textContent = capitalizeFirstLetter(currentCategory);
+            
+            if (currentLevel === 'image') {
                 categoryLink.addEventListener('click', () => navigateToCategory(currentCategory));
-                breadcrumb.appendChild(categoryLink);
             }
+            
+            breadcrumb.appendChild(categoryLink);
             
             // Add concept if applicable
             if (currentConcept) {
@@ -674,8 +615,8 @@
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
         
-        // Initialize the app
-        navigateToHome();
+        // Initialize the app - start with Generation tab by default
+        navigateToCategory('generation');
     </script>
 </body>
 </html>
