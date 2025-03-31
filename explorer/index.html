@@ -15,7 +15,8 @@
         body {
             background-color: #121212;
             color: white;
-            min-height: 100vh;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
             flex-direction: column;
         }
@@ -46,7 +47,6 @@
             gap: 10px;
             align-items: center;
             background-color: rgba(0, 0, 0, 0.3);
-            flex-wrap: wrap;
         }
         
         .navigation-breadcrumb span {
@@ -67,11 +67,7 @@
         .container {
             flex: 1;
             position: relative;
-            overflow: auto; /* Changed from hidden to auto */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 0; /* Allows the container to shrink */
+            overflow: hidden;
         }
         
         .level {
@@ -82,8 +78,6 @@
             justify-content: center;
             align-items: center;
             transition: transform 0.8s cubic-bezier(0.3, 0, 0.3, 1), opacity 0.5s ease;
-            overflow: auto; /* Allow scrolling within levels */
-            padding: 20px;
         }
         
         .level.hidden {
@@ -108,19 +102,21 @@
         
         /* Category level */
         .category-level {
-            gap: 30px;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            padding: 40px;
-            align-content: center;
+            gap: 5%;
+            padding: 20px;
+            overflow-y: auto;
+            align-items: center;
+            justify-content: center;
         }
         
         .category {
-            width: min(300px, 80vw); /* Responsive width */
-            height: min(450px, 60vh); /* Responsive height */
+            width: 40%;
+            max-width: 300px;
+            aspect-ratio: 2/3; /* Maintain aspect ratio */
             background-position: center;
             background-size: cover;
             position: relative;
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0;
         }
         
         .category-label {
@@ -140,21 +136,22 @@
         .concept-level {
             flex-wrap: wrap;
             justify-content: center;
-            align-content: center;
+            align-content: flex-start;
             gap: 30px;
-            padding: 40px;
+            padding: 50px;
             overflow-y: auto;
         }
         
         .concept {
-            width: min(200px, 40vw); /* Responsive width */
-            height: min(200px, 40vw); /* Maintain aspect ratio */
+            width: calc(33.333% - 30px);
+            max-width: 200px;
+            aspect-ratio: 1/1; /* Maintain aspect ratio */
             background-position: center;
             background-size: cover;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            flex-shrink: 0; /* Prevent shrinking */
+            min-width: 150px;
         }
         
         .concept-label {
@@ -167,7 +164,7 @@
         /* Image level */
         .image-level {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             grid-gap: 20px;
             padding: 40px;
             overflow-y: auto;
@@ -316,10 +313,21 @@
             .category-level {
                 flex-direction: column;
                 gap: 30px;
+                overflow-y: auto;
+            }
+            
+            .category {
+                width: 80%;
+                max-width: 250px;
+            }
+            
+            .concept {
+                width: calc(50% - 30px);
+                min-width: 130px;
             }
             
             .image-level {
-                grid-template-columns: repeat(auto-fill, minmax(min(160px, 100%), 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
                 padding: 20px;
             }
             
@@ -327,28 +335,25 @@
                 font-size: 1.8rem;
             }
             
-            .back-button {
-                padding: 10px 20px;
-                font-size: 1rem;
-                bottom: 20px;
-                right: 20px;
+            .header p {
+                font-size: 0.9rem;
             }
         }
         
-        /* Ensure content is visible on very small screens */
         @media (max-width: 480px) {
-            .category {
-                width: 85vw;
-                height: 50vh;
-            }
-            
             .concept {
-                width: 150px;
-                height: 150px;
+                width: 100%;
+                max-width: 200px;
             }
             
-            .concept-level, .category-level {
-                padding: 20px;
+            .category-label {
+                font-size: 1.4rem;
+                padding: 15px;
+            }
+            
+            .back-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -509,9 +514,7 @@
         
         // Add resize event listener to handle zoom changes
         window.addEventListener('resize', () => {
-            if (currentLevel === 'image') {
-                // No need to reload images, the CSS grid will handle responsive layout
-            }
+            // No specific action needed as CSS handles responsiveness
         });
         
         // Navigation functions
