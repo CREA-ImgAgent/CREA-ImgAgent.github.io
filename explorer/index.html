@@ -22,7 +22,7 @@
         }
         
         .header {
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 10;
@@ -100,23 +100,36 @@
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
         
-        /* Category level */
+        /* Category level - IMPROVED for dynamic resizing */
         .category-level {
             gap: 5%;
             padding: 20px;
-            overflow-y: auto;
             align-items: center;
             justify-content: center;
+            overflow: visible; /* Prevent scrolling on home screen */
+            height: 100%;
+        }
+        
+        .category-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5%;
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
         }
         
         .category {
             width: 40%;
             max-width: 300px;
-            aspect-ratio: 2/3; /* Maintain aspect ratio */
+            height: 0;
+            padding-bottom: 60%; /* Dynamic aspect ratio */
             background-position: center;
             background-size: cover;
             position: relative;
             flex-shrink: 0;
+            max-height: 450px; /* Prevent from becoming too tall */
         }
         
         .category-label {
@@ -308,17 +321,33 @@
             background: rgba(255, 255, 255, 0.4);
         }
         
-        /* Media queries for responsive design */
+        /* Media queries for responsive design - IMPROVED */
         @media (max-width: 768px) {
-            .category-level {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .category-container {
                 flex-direction: column;
-                gap: 30px;
-                overflow-y: auto;
+                gap: 20px;
             }
             
             .category {
                 width: 80%;
                 max-width: 250px;
+                padding-bottom: 48%; /* Proportionally smaller on mobile */
+                max-height: none; /* Allow dynamic height */
+                height: auto;
+                aspect-ratio: 2/1; /* Wider ratio on mobile */
+            }
+            
+            .category-label {
+                padding: 10px;
+                font-size: 1.4rem;
             }
             
             .concept {
@@ -330,14 +359,6 @@
                 grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
                 padding: 20px;
             }
-            
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .header p {
-                font-size: 0.9rem;
-            }
         }
         
         @media (max-width: 480px) {
@@ -346,14 +367,55 @@
                 max-width: 200px;
             }
             
-            .category-label {
-                font-size: 1.4rem;
-                padding: 15px;
-            }
-            
             .back-button {
                 padding: 10px 20px;
                 font-size: 0.9rem;
+            }
+            
+            .header {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
+            
+            .category {
+                width: 85%;
+                aspect-ratio: 16/9; /* Even wider on small screens */
+            }
+        }
+        
+        /* Height-specific adjustments to prevent overflow */
+        @media (max-height: 600px) {
+            .header {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
+            
+            .header p {
+                font-size: 0.8rem;
+            }
+            
+            .category {
+                aspect-ratio: 16/9; /* Wider ratio for short screens */
+                max-height: 200px;
+            }
+        }
+        
+        /* For very small screens */
+        @media (max-height: 450px) {
+            .header p {
+                display: none; /* Hide description on very small screens */
+            }
+            
+            .category {
+                max-height: 150px;
             }
         }
     </style>
@@ -369,13 +431,15 @@
     </div>
     
     <div class="container">
-        <!-- Category Level -->
+        <!-- Category Level with container for better control -->
         <div class="level category-level">
-            <div class="category generation" data-category="generation">
-                <div class="category-label">Generation</div>
-            </div>
-            <div class="category editing" data-category="editing">
-                <div class="category-label">Editing</div>
+            <div class="category-container">
+                <div class="category generation" data-category="generation">
+                    <div class="category-label">Generation</div>
+                </div>
+                <div class="category editing" data-category="editing">
+                    <div class="category-label">Editing</div>
+                </div>
             </div>
         </div>
         
@@ -466,6 +530,7 @@
         const imageModal = document.getElementById('image-modal');
         const modalImage = document.getElementById('modal-image');
         const closeModal = document.getElementById('close-modal');
+        const categoryContainer = document.querySelector('.category-container');
         
         // Add event listeners for category selection
         document.querySelectorAll('.category').forEach(category => {
@@ -512,10 +577,59 @@
             }
         });
         
-        // Add resize event listener to handle zoom changes
-        window.addEventListener('resize', () => {
-            // No specific action needed as CSS handles responsiveness
-        });
+        // Add resize event listener to handle dynamic resizing
+        window.addEventListener('resize', adjustHomeScreenLayout);
+        
+        // Function to adjust the home screen layout based on screen dimensions
+        function adjustHomeScreenLayout() {
+            const windowHeight = window.innerHeight;
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            const breadcrumbHeight = document.querySelector('.navigation-breadcrumb').offsetHeight;
+            const availableHeight = windowHeight - headerHeight - breadcrumbHeight - 40; // 40px for padding
+            
+            // Adjust the category styling based on available space
+            const categories = document.querySelectorAll('.category');
+            
+            if (window.innerWidth <= 768) {
+                // Mobile layout (stacked)
+                categoryContainer.style.flexDirection = 'column';
+                
+                // Calculate the ideal height for categories in mobile view
+                let idealHeight = Math.min(availableHeight / 2 - 20, 250); // 20px for gap
+                idealHeight = Math.max(idealHeight, 120); // Minimum height
+                
+                categories.forEach(category => {
+                    if (window.innerHeight <= 500) {
+                        // Very small screen height, use fixed small height
+                        category.style.height = '120px';
+                        category.style.paddingBottom = '0';
+                    } else {
+                        category.style.height = `${idealHeight}px`;
+                        category.style.paddingBottom = '0';
+                    }
+                });
+            } else {
+                // Desktop layout (side by side)
+                categoryContainer.style.flexDirection = 'row';
+                
+                // Calculate maximum width and height based on aspect ratio
+                const maxWidth = Math.min(window.innerWidth * 0.35, 300);
+                let idealHeight = Math.min(availableHeight * 0.8, maxWidth * 1.5);
+                
+                categories.forEach(category => {
+                    if (window.innerHeight <= 600) {
+                        // Adjust for shorter screens
+                        category.style.height = `${Math.min(idealHeight, 200)}px`;
+                        category.style.width = `${Math.min(idealHeight / 1.5, maxWidth)}px`;
+                        category.style.paddingBottom = '0';
+                    } else {
+                        category.style.height = `${idealHeight}px`;
+                        category.style.width = `${Math.min(idealHeight / 1.5, maxWidth)}px`;
+                        category.style.paddingBottom = '0';
+                    }
+                });
+            }
+        }
         
         // Navigation functions
         function navigateToHome() {
@@ -534,6 +648,9 @@
             
             // Update breadcrumb
             updateBreadcrumb();
+            
+            // Adjust layout for home screen
+            adjustHomeScreenLayout();
         }
         
         function navigateToCategory(categoryName) {
@@ -676,6 +793,9 @@
         
         // Initialize the app
         navigateToHome();
+        
+        // Run initial layout adjustment
+        adjustHomeScreenLayout();
     </script>
 </body>
 </html>
