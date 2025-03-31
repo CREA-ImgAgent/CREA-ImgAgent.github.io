@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #121212;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            padding: 20px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1rem;
+            opacity: 0.7;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .navigation-breadcrumb {
+            padding: 10px 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .navigation-breadcrumb span {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        .navigation-breadcrumb span:hover {
+            opacity: 1;
+        }
+        
+        .navigation-breadcrumb .separator {
+            opacity: 0.4;
+            cursor: default;
+        }
+        
+        .container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .level {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.8s cubic-bezier(0.3, 0, 0.3, 1), opacity 0.5s ease;
+        }
+        
+        .level.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.9);
+        }
+        
+        .category, .concept, .image-item {
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .category:hover, .concept:hover, .image-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Category level */
+        .category-level {
+            gap: 50px;
+        }
+        
+        .category {
+            width: 300px;
+            height: 450px;
+            background-position: center;
+            background-size: cover;
+            position: relative;
+        }
+        
+        .category-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        /* Concept level */
+        .concept-level {
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: center;
+            gap: 30px;
+            padding: 50px;
+            overflow-y: auto;
+        }
+        
+        .concept {
+            width: 200px;
+            height: 200px;
+            background-position: center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+        
+        .concept-label {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        /* Image level */
+        .image-level {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-gap: 20px;
+            padding: 40px;
+            overflow-y: auto;
+            height: 100%;
+            align-content: start;
+            width: 100%;
+        }
+        
+        .image-item {
+            width: 100%;
+            padding-bottom: 100%; /* Maintain aspect ratio */
+            background-position: center;
+            background-size: cover;
+            position: relative;
+        }
+        
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transform: translateY(-3px);
+        }
+        
+        .back-icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+        
+        .zoom-effect {
+            animation: zoomEffect 0.8s cubic-bezier(0.2, 0, 0.3, 1);
+        }
+        
+        @keyframes zoomEffect {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Generation theme */
+        .category.generation {
+            background-image: url('/images/generation.png');
+            border: 4px solid #4CAF50;
+        }
+        
+        /* Editing theme */
+        .category.editing {
+            background-image: url('/images/editing.png');
+            border: 4px solid #2196F3;
+        }
+        
+        /* Generation concepts styling */
+        .generation-concepts .concept {
+            border: 3px solid #4CAF50;
+        }
+        
+        /* Editing concepts styling */
+        .editing-concepts .concept {
+            border: 3px solid #2196F3;
+        }
+        
+        /* Image modal styles */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .image-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .modal-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .image-modal.active .modal-image {
+            transform: scale(1);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Media queries for responsive design */
+        @media (max-width: 768px) {
+            .category-level {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .image-level {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CREATIVE IMAGE EXPLORATION</h1>
+        <p>Navigate through generated and edited images produced using the CREA pipeline.</p>
+    </div>
+    
+    <div class="navigation-breadcrumb">
+        <span id="home-link">Home</span>
+    </div>
+    
+    <div class="container">
+        <!-- Category Level -->
+        <div class="level category-level">
+            <div class="category generation" data-category="generation">
+                <div class="category-label">Generation</div>
+            </div>
+            <div class="category editing" data-category="editing">
+                <div class="category-label">Editing</div>
+            </div>
+        </div>
+        
+        <!-- Concept Level for Generation -->
+        <div class="level concept-level generation-concepts hidden" data-for="generation">
+            <div class="concept" style="background-image: url('/images/generation/couch/47.png')" data-concept="couch" data-category="generation">
+                <div class="concept-label">Couch</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/generation/chair/44.png')" data-concept="chair" data-category="generation">
+                <div class="concept-label">Chair</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/generation/car/27.png')" data-concept="car" data-category="generation">
+                <div class="concept-label">Car</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/generation/monster/49.png')" data-concept="monster" data-category="generation">
+                <div class="concept-label">Monster</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/generation/mug/26.png')" data-concept="mug" data-category="generation">
+                <div class="concept-label">Mug</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/generation/table/26.png')" data-concept="table" data-category="generation">
+                <div class="concept-label">Table</div>
+            </div>
+        </div>
+        
+        <!-- Concept Level for Editing -->
+        <div class="level concept-level editing-concepts hidden" data-for="editing">
+            <div class="concept" style="background-image: url('/images/editing/bike/26.png')" data-concept="bike" data-category="editing">
+                <div class="concept-label">Bike</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/editing/couch/7.jpg')" data-concept="couch" data-category="editing">
+                <div class="concept-label">Couch</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/editing/bowl/22.png')" data-concept="bowl" data-category="editing">
+                <div class="concept-label">Bowl</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/editing/guitar/10.jpg')" data-concept="guitar" data-category="editing">
+                <div class="concept-label">Guitar</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/editing/helmet/25.png')" data-concept="helmet" data-category="editing">
+                <div class="concept-label">Helmet</div>
+            </div>
+            <div class="concept" style="background-image: url('/images/editing/table/11.jpg')" data-concept="table" data-category="editing">
+                <div class="concept-label">Table</div>
+            </div>
+        </div>
+        
+        <!-- Image Level (dynamically populated by JavaScript) -->
+        <div class="level image-level hidden" id="image-container">
+            <!-- Images will be populated here -->
+        </div>
+    </div>
+    
+    <!-- Home Button -->
+    <button class="back-button" id="back-button">
+        <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 2.0996A9.9 9.9 0 0 0 2.0996 12A9.9 9.9 0 0 0 12 21.9A9.9 9.9 0 0 0 21.9 12A9.9 9.9 0 0 0 12 2.0996zM16.5 12.75H10.125L12.683 15.308L11.625 16.366L7.25897 12L11.625 7.63397L12.683 8.69197L10.125 11.25H16.5V12.75z" fill="currentColor"/>
+        </svg>
+        <span id="back-button-text">Back to Home</span>
+    </button>
+    
+    <!-- Image Modal -->
+    <div class="image-modal" id="image-modal">
+        <img src="" alt="Selected image" class="modal-image" id="modal-image">
+        <button class="close-modal" id="close-modal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+    
+    <script>
+        // Navigation state
+        let currentLevel = 'category';
+        let currentCategory = null;
+        let currentConcept = null;
+        
+        // Get DOM elements
+        const categoryLevel = document.querySelector('.category-level');
+        const generationConceptsLevel = document.querySelector('.generation-concepts');
+        const editingConceptsLevel = document.querySelector('.editing-concepts');
+        const imageLevel = document.querySelector('.image-level');
+        const breadcrumb = document.querySelector('.navigation-breadcrumb');
+        const homeLink = document.getElementById('home-link');
+        const backButton = document.getElementById('back-button');
+        const backButtonText = document.getElementById('back-button-text');
+        const imageModal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const closeModal = document.getElementById('close-modal');
+        
+        // Add event listeners for category selection
+        document.querySelectorAll('.category').forEach(category => {
+            category.addEventListener('click', function() {
+                const categoryName = this.dataset.category;
+                navigateToCategory(categoryName);
+            });
+        });
+        
+        // Add event listeners for concept selection
+        document.querySelectorAll('.concept').forEach(concept => {
+            concept.addEventListener('click', function() {
+                const conceptName = this.dataset.concept;
+                const categoryName = this.dataset.category;
+                navigateToConcept(categoryName, conceptName);
+            });
+        });
+        
+        // Home link
+        homeLink.addEventListener('click', () => {
+            navigateToHome();
+        });
+        
+        // Back button - dynamically changes behavior based on current level
+        backButton.addEventListener('click', () => {
+            if (currentLevel === 'image') {
+                navigateToCategory(currentCategory);
+            } else if (currentLevel === 'concept') {
+                navigateToHome();
+            } else {
+                navigateToHome();
+            }
+        });
+        
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            imageModal.classList.remove('active');
+        });
+        
+        // Close modal on click outside image
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('active');
+            }
+        });
+        
+        // Add resize event listener to handle zoom changes
+        window.addEventListener('resize', () => {
+            if (currentLevel === 'image') {
+                // No need to reload images, the CSS grid will handle responsive layout
+            }
+        });
+        
+        // Navigation functions
+        function navigateToHome() {
+            currentLevel = 'category';
+            currentCategory = null;
+            currentConcept = null;
+            
+            // Update UI
+            categoryLevel.classList.remove('hidden');
+            generationConceptsLevel.classList.add('hidden');
+            editingConceptsLevel.classList.add('hidden');
+            imageLevel.classList.add('hidden');
+            
+            // Update back button
+            backButtonText.textContent = 'Back to Home';
+            
+            // Update breadcrumb
+            updateBreadcrumb();
+        }
+        
+        function navigateToCategory(categoryName) {
+            currentLevel = 'concept';
+            currentCategory = categoryName;
+            currentConcept = null;
+            
+            // Hide all levels first
+            categoryLevel.classList.add('hidden');
+            generationConceptsLevel.classList.add('hidden');
+            editingConceptsLevel.classList.add('hidden');
+            imageLevel.classList.add('hidden');
+            
+            // Then show the appropriate concept level
+            if (categoryName === 'generation') {
+                generationConceptsLevel.classList.remove('hidden');
+                generationConceptsLevel.classList.add('zoom-effect');
+                setTimeout(() => generationConceptsLevel.classList.remove('zoom-effect'), 800);
+            } else if (categoryName === 'editing') {
+                editingConceptsLevel.classList.remove('hidden');
+                editingConceptsLevel.classList.add('zoom-effect');
+                setTimeout(() => editingConceptsLevel.classList.remove('zoom-effect'), 800);
+            }
+            
+            // Update back button
+            backButtonText.textContent = 'Back to Home';
+            
+            // Update breadcrumb
+            updateBreadcrumb();
+        }
+        
+        function navigateToConcept(categoryName, conceptName) {
+            currentLevel = 'image';
+            currentCategory = categoryName;
+            currentConcept = conceptName;
+            
+            // Hide all other levels
+            categoryLevel.classList.add('hidden');
+            generationConceptsLevel.classList.add('hidden');
+            editingConceptsLevel.classList.add('hidden');
+            
+            // Load images for this concept
+            loadImagesForConcept(categoryName, conceptName);
+            
+            // Show image level
+            imageLevel.classList.remove('hidden');
+            imageLevel.classList.add('zoom-effect');
+            setTimeout(() => imageLevel.classList.remove('zoom-effect'), 800);
+            
+            // Update back button
+            backButtonText.textContent = `Back to ${capitalizeFirstLetter(categoryName)}`;
+            
+            // Update breadcrumb
+            updateBreadcrumb();
+        }
+        
+        async function getImagesFromFolder(folderPath) {
+            try {
+                // Fetch the static JSON manifest with your image data
+                const response = await fetch('/images.json');
+                const data = await response.json();
+                // Return the array of images for the requested folder, or an empty array if not found
+                const images = data[folderPath] || [];
+
+                for (let i = images.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [images[i], images[j]] = [images[j], images[i]];
+                }
+
+                return images;
+            } catch (error) {
+                console.error('Error loading images:', error);
+                // For demo purposes, return some placeholder images
+                return Array(8).fill().map((_, i) => `/api/placeholder/220/220`);
+            }
+        }
+        
+        async function loadImagesForConcept(categoryName, conceptName) {
+            // Clear current images
+            imageLevel.innerHTML = '';
+            
+            // Get images from folder
+            const folderPath = `images/${categoryName}/${conceptName}`;
+            const images = await getImagesFromFolder(folderPath);
+            
+            // Create image elements
+            images.forEach((imagePath, index) => {
+                const imageElement = document.createElement('div');
+                imageElement.className = 'image-item';
+                imageElement.style.backgroundImage = `url(${imagePath})`;
+                imageElement.dataset.src = imagePath;
+                
+                imageElement.addEventListener('click', () => {
+                    openImageModal(imagePath);
+                });
+                
+                imageLevel.appendChild(imageElement);
+            });
+        }
+        
+        function openImageModal(imageSrc) {
+            modalImage.src = imageSrc;
+            imageModal.classList.add('active');
+        }
+        
+        function updateBreadcrumb() {
+            // Clear existing breadcrumb (except home)
+            while (breadcrumb.children.length > 1) {
+                breadcrumb.removeChild(breadcrumb.lastChild);
+            }
+            
+            // Add category if applicable
+            if (currentCategory) {
+                addBreadcrumbSeparator();
+                const categoryLink = document.createElement('span');
+                categoryLink.textContent = capitalizeFirstLetter(currentCategory);
+                categoryLink.addEventListener('click', () => navigateToCategory(currentCategory));
+                breadcrumb.appendChild(categoryLink);
+            }
+            
+            // Add concept if applicable
+            if (currentConcept) {
+                addBreadcrumbSeparator();
+                const conceptLink = document.createElement('span');
+                conceptLink.textContent = capitalizeFirstLetter(currentConcept);
+                breadcrumb.appendChild(conceptLink);
+            }
+        }
+        
+        function addBreadcrumbSeparator() {
+            const separator = document.createElement('span');
+            separator.textContent = '>';
+            separator.className = 'separator';
+            breadcrumb.appendChild(separator);
+        }
+        
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        
+        // Initialize the app
+        navigateToHome();
+    </script>
+</body>
+</html>
