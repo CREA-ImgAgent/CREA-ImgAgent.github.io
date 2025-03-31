@@ -78,6 +78,7 @@
             justify-content: center;
             align-items: center;
             transition: transform 0.8s cubic-bezier(0.3, 0, 0.3, 1), opacity 0.5s ease;
+            overflow-y: auto;
         }
         
         .level.hidden {
@@ -102,12 +103,18 @@
         
         /* Category level */
         .category-level {
-            gap: 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
+            gap: 40px;
+            padding: 40px;
+            justify-content: center;
+            align-content: center;
         }
         
         .category {
-            width: 300px;
-            height: 450px;
+            width: 100%;
+            height: 0;
+            padding-bottom: 150%; /* Maintain aspect ratio */
             background-position: center;
             background-size: cover;
             position: relative;
@@ -128,25 +135,28 @@
         
         /* Concept level */
         .concept-level {
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 200px));
+            gap: 30px;
+            padding: 40px;
             justify-content: center;
             align-content: center;
-            gap: 30px;
-            padding: 50px;
-            overflow-y: auto;
         }
         
         .concept {
-            width: 200px;
-            height: 200px;
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%; /* Square aspect ratio */
             background-position: center;
             background-size: cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
+            position: relative;
         }
         
         .concept-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: rgba(0, 0, 0, 0.7);
             padding: 10px;
             text-align: center;
@@ -156,7 +166,7 @@
         /* Image level */
         .image-level {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             grid-gap: 20px;
             padding: 40px;
             overflow-y: auto;
@@ -301,15 +311,81 @@
         }
         
         /* Media queries for responsive design */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .category-level {
-                flex-direction: column;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
                 gap: 30px;
+            }
+            
+            .concept-level {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 180px));
+                gap: 25px;
             }
             
             .image-level {
                 grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .category-level {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 20px;
                 padding: 20px;
+            }
+            
+            .concept-level {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .image-level {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                padding: 20px;
+            }
+            
+            .category-label {
+                font-size: 1.4rem;
+                padding: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .category-level, .concept-level, .image-level {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .category-level {
+                grid-template-columns: 1fr;
+            }
+            
+            .concept-level {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .image-level {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .back-button {
+                bottom: 15px;
+                right: 15px;
+                padding: 10px 15px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -468,11 +544,10 @@
             }
         });
         
-        // Add resize event listener to handle zoom changes
+        // Add resize event listener to adjust layout based on screen size
         window.addEventListener('resize', () => {
-            if (currentLevel === 'image') {
-                // No need to reload images, the CSS grid will handle responsive layout
-            }
+            // The CSS grid will handle responsive layouts automatically
+            // No additional JavaScript needed for resizing
         });
         
         // Navigation functions
