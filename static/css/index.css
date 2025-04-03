@@ -80,7 +80,9 @@ body {
 
 .author-block {
   display: inline-block;
+  margin-right: 0.2rem;
 }
+
 
 .publication-banner img {
 }
@@ -156,7 +158,4 @@ body {
   border-radius: 5px;
 }
 
-.author-block {
-  margin-right: 0.2rem;
-}
 
